@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import { getMissions } from "../controllers/missions.controller";
+import { getMissions } from "../controllers/missions.controller.js";
 
 const router = express.Router();
 

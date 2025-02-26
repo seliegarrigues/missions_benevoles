@@ -1,4 +1,4 @@
-import MissionsRepository from "../repositories/missions.repository";
+import MissionsRepository from "../repositories/missions.repository.js";
 
 const getMissions = async (req, res) => {
   try {
