@@ -4,7 +4,8 @@ import missionsRoutes from "./routes/missions.routes.js";
 /* import candidaturesRoutes from "./routes/candidatures.routes.js"; */
 
 const app = express();
-app.use(express.json()).use("/missions", missionsRoutes);
+app.use(express.json());
+app.use("/missions", missionsRoutes);
 /* .use("/candidatures", candidaturesRoutes); */
 
 const PORT = process.env.PORT || 3000;
