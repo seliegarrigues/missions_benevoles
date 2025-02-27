@@ -80,10 +80,10 @@ const MissionsRepository = class {
     try {
       conn = await this.pool.getConnection();
       await conn.query(
-        `UPDATE missions SET titre = ?, description = ?, date_debut = ? WHERE miss_id = ?`,
-        [titre, description, id_util, date_debut, miss_id]
+        `UPDATE missions SET titre = ?, description = ?, date_debut = ? WHERE id_miss = ?`,
+        [titre, description, id_util, date_debut, id_miss]
       );
-      const paramMission = { miss_id, titre, description, date_debut };
+      const paramMission = { id_miss, titre, description, date_debut };
       return paramMission;
     } catch (error) {
       console.error(
@@ -98,12 +98,12 @@ const MissionsRepository = class {
       }
     }
   }
-  async deleteMissionById(miss_id) {
+  async deleteMissionById(id_miss) {
     let conn;
 
     try {
       conn = await this.pool.getConnection();
-      await conn.query(`DELETE FROM missions WHERE miss_id = ?`, [miss_id]);
+      await conn.query(`DELETE FROM missions WHERE id_miss = ?`, [id_miss]);
       return " Bravo ! La suppression de la mission a bien été effectuée";
     } catch (error) {
       console.error(

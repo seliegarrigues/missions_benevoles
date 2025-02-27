@@ -18,12 +18,12 @@ const getMissions = async (req, res) => {
 };
 
 const getMissionsById = async (req, res) => {
-  const { miss_id } = req.params;
+  const { id_miss } = req.params;
 
   try {
     const missionsRepository = new MissionsRepository();
 
-    const missionsById = await missionsRepository.getMissionsById(miss_id);
+    const missionsById = await missionsRepository.getMissionsById(id_miss);
 
     res
       .status(200)
@@ -41,7 +41,7 @@ const createMission = async (req, res) => {
   try {
     const missionsRepository = new MissionsRepository();
     const paramMission = await missionsRepository.createMission(
-      miss_id,
+      id_miss,
       titre,
       description,
       date_debut
@@ -58,12 +58,12 @@ const createMission = async (req, res) => {
 
 const updateMissionById = async (req, res) => {
   const { titre, description, date_debut } = req.body;
-  const { miss_id } = req.params;
+  const { id_miss } = req.params;
 
   try {
     const missionsRepository = new MissionsRepository();
     const updateMission = await missionsRepository.updateMissionById(
-      miss_id,
+      id_miss,
       titre,
       description,
       date_debut
@@ -78,19 +78,23 @@ const updateMissionById = async (req, res) => {
   }
 };
 const deleteMissionById = async (req, res) => {
-  const { miss_id } = req.params;
+  const { id_miss } = req.params;
   try {
     const missionsRepository = new MissionsRepository();
-    const deleteMission = await missionsRepository.deleteMissionById(miss_id);
-    res
-      .status(200)
-      .json({
-        message: "la suppression de la mission est correctement effectuée",
-      });
+    const deleteMission = await missionsRepository.deleteMissionById(id_miss);
+    res.status(200).json({
+      message: "la suppression de la mission est correctement effectuée",
+    });
   } catch (error) {
     const message = `Navré! il y a un souci dans deleteMissionById du controller : ${error.message}`;
     console.error(message);
     res.status(500).json({ error: message });
   }
 };
-export { getMissions, getMissionsById, createMission, updateMissionById, deleteMissionById };
+export {
+  getMissions,
+  getMissionsById,
+  createMission,
+  updateMissionById,
+  deleteMissionById,
+};
