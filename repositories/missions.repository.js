@@ -74,14 +74,14 @@ const MissionsRepository = class {
       }
     }
   }
-  async updateMissionById(titre, description, date_debut) {
+  async updateMissionById(id_miss, titre, description, date_debut) {
     let conn;
 
     try {
       conn = await this.pool.getConnection();
       await conn.query(
         `UPDATE missions SET titre = ?, description = ?, date_debut = ? WHERE id_miss = ?`,
-        [titre, description, id_util, date_debut, id_miss]
+        [titre, description, date_debut, id_miss]
       );
       const paramMission = { id_miss, titre, description, date_debut };
       return paramMission;

@@ -32,7 +32,9 @@ const CandidaturesRepository = class {
     try {
       conn = await this.pool.getConnection();
       const rowsById = await conn.query(
-        `SELECT * FROM candidatures WHERE id_cand = ?`,
+        `SELECT c.id_cand, c.date_cand, m.titre AS mission_titre, u.nom, u.prenom FROM candidatures c 
+        JOIN missions m ON c.id_miss = m.id_miss 
+        JOIN utilisateurs u ON c.id_util = u.id_util WHERE c.id_cand = ?`,
         [id_cand]
       );
       console.info(` info de suivi selection candidature par id`, rowsById);
@@ -56,7 +58,7 @@ const CandidaturesRepository = class {
       conn = await this.pool.getConnection();
       const paramCandidature = { id_miss, id_util, date_cand };
       await conn.query(
-        `INSERT INTO candidatures (id_miss, id_util, dat_cand) VALUES (?,?,?)`,
+        `INSERT INTO candidatures (id_miss, id_util, date_cand) VALUES (?,?,?)`,
         [id_miss, id_util, date_cand]
       );
       return paramCandidature;
@@ -73,16 +75,16 @@ const CandidaturesRepository = class {
       }
     }
   }
-  async updateApplicationById(id_cand, status) {
+  async updateCandidatureById(id_cand, statut) {
     let conn;
 
     try {
       conn = await this.pool.getConnection();
-      await conn.query(`UPDATE candidatures SET status = ? WHERE id_cand = ?`, [
-        status,
+      await conn.query(`UPDATE candidatures SET statut = ? WHERE id_cand = ?`, [
+        statut,
         id_cand,
       ]);
-      const paramCandidature = { id_cand, status };
+      const paramCandidature = { id_cand, statut };
       return paramCandidature;
     } catch (error) {
       console.error(

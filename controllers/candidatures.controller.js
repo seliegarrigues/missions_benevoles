@@ -6,7 +6,8 @@ const getCandidatures = async (req, res) => {
 
     const candidatures = await candidaturesRepository.getCandidatures();
 
-    res.json(`Bravo! vous pouvez consulter les éléments demandés`, {
+    res.json({
+      message: "Bravo! vous pouvez consulter les éléments demandés",
       candidatures,
     });
   } catch (error) {
@@ -18,18 +19,17 @@ const getCandidatures = async (req, res) => {
 };
 
 const getCandidatureById = async (req, res) => {
-  const { id_cand } = req.params;
+  const { id } = req.params;
 
   try {
     const candidaturesRepository = new CandidaturesRepository();
 
-    const candidatureById = await candidaturesRepository.getCandidatureById(
-      id_cand
-    );
+    const candidatureById = await candidaturesRepository.getCandidatureById(id);
 
-    res
-      .status(200)
-      .json(`Bravo! voici ce que vous avez demandé`, { candidatureById });
+    res.status(200).json({
+      message: "Bravo! voici l'élément demandé",
+      candidatureById,
+    });
   } catch (error) {
     const message = `Navré! il y a un souci dans  getCandidatureByID du controller : ${error.message}`;
     console.error(message);
@@ -47,7 +47,8 @@ const createCandidature = async (req, res) => {
       id_util,
       date_cand
     );
-    res.status(200).json(`Bravo! La candidature a été correctement crée !`, {
+    res.status(200).json({
+      message: "Bravo! la candidature a été correctement crée",
       paramCandidature,
     });
   } catch (error) {
@@ -59,16 +60,16 @@ const createCandidature = async (req, res) => {
 
 const updateCandidatureById = async (req, res) => {
   const { status } = req.body;
-  const { id_cand } = req.params;
+  const { id } = req.params;
 
   try {
     const candidaturesRepository = new CandidaturesRepository();
     const updateCandidature =
-      await candidaturesRepository.updateCandidatureById(id_cand, status);
+      await candidaturesRepository.updateCandidatureById(id, status);
     if (updateCandidature) {
-      res
-        .status(200)
-        .json(` Bravo! la candidature a été mis à jour correctement`);
+      res.status(200).json({
+        message: "Bravo! la candidature a bien été mis à jour.",
+      });
     }
   } catch (error) {
     const message = `Navré! il y a un souci dans updateCandidature du controller : ${error.message}`;
@@ -77,11 +78,11 @@ const updateCandidatureById = async (req, res) => {
   }
 };
 const deleteCandidatureById = async (req, res) => {
-  const { id_cand } = req.params;
+  const { id } = req.params;
   try {
     const candidaturesRepository = new CandidaturesRepository();
     const deleteCandidature =
-      await candidaturesRepository.deleteCandidatureById(id_cand);
+      await candidaturesRepository.deleteCandidatureById(id);
     res.status(200).json({
       message: "la suppression de la candidature est correctement effectuée",
     });
