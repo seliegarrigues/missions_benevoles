@@ -28,22 +28,22 @@ const MissionsRepository = class {
       }
     }
   };
-  getMissionsById = async (miss_id) => {
+  getMissionsById = async (id_miss) => {
     let conn;
     try {
       conn = await this.pool.getConnection();
       const rowsById = await conn.query(
         `SELECT * FROM missions WHERE id_miss = ?`,
-        [miss_id]
+        [id_miss]
       );
       console.info(` info de suivi selection mission par id`, rowsById);
       return rowsById;
     } catch (error) {
       console.error(
-        `Erreur dans GetMissionsById du repository id : ${miss_id} : ${error.message}`
+        `Erreur dans GetMissionsById du repository id : ${id_miss} : ${error.message}`
       );
       throw new Error(
-        ` Erreur dans la fonctionnalité de getMissionsById(id:${miss_id}) : ${error.message}`
+        ` Erreur dans la fonctionnalité de getMissionsById(id:${id_miss}) : ${error.message}`
       );
     } finally {
       if (conn) {
