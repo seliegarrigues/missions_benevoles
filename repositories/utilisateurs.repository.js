@@ -50,6 +50,30 @@ const UtilisateursRepository = class {
       }
     }
   };
+  getUtilisateurByEmail = async (email) => {
+    let conn;
+    try {
+      conn = await this.pool.getConnection();
+      const rowsByEmail = await conn.query(
+        `SELECT * FROM utilisateurs WHERE email = ?`,
+        [email.trim()]
+      );
+      console.info(
+        ` info de suivi selection utilisateur par id`,
+        rowsByEMail[0]
+      );
+      return rowsByEmail.length > 0 ? rowsByEmail[0] : null;
+    } catch (error) {
+      console.error(
+        `Erreur dans getUtilisateurByEmail du repository email: ${email} : ${error.message}`
+      );
+      throw Error;
+    } finally {
+      if (conn) {
+        conn.release();
+      }
+    }
+  };
   async createUtilisateur(types, nom, email, mdp) {
     let conn;
     try {
