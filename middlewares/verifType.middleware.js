@@ -1,5 +1,5 @@
 export function verifTypeUtilisateur(TypeOk = []) {
-  return (res, req, next) => {
+  return (req, res, next) => {
     if (!req.user) {
       return res.status(401).json({ message: " Utilisateur non authentifié " });
     }

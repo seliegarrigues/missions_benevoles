@@ -1,0 +1,215 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "missions_entraide",
+    "version": "1.0.0",
+    "description": "Cette API permet aux bénévoles de candidater à des missions d'associations disponibles "
+  },
+  "paths": {
+    "/utilisateurs": {
+      "post": {
+        "summary": "Créer un utilisateur",
+        "description": "Permet de créer un nouvel utilisateur.",
+        "operationId": "createUtilisateur",
+        "requestBody": {
+          "description": "Informations de l'utilisateur à créer",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "john.doe@example.com"
+                  },
+                  "types": {
+                    "type": "enum",
+                    "example": "associations"
+                  }
+                },
+                "required": ["email", "types"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Utilisateur créé avec succès",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 1,
+                  "name": "John Doe",
+                  "email": "john.doe@example.com",
+                  "age": 30
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Mauvaise requête, données manquantes ou incorrectes"
+          }
+        }
+      },
+      "get": {
+        "summary": "Obtenir tous les utilisateurs",
+        "description": "Permet d'obtenir la liste de tous les utilisateurs.",
+        "operationId": "getUtilisateurs",
+        "responses": {
+          "200": {
+            "description": "Liste des utilisateurs",
+            "content": {
+              "application/json": {
+                "example": [
+                  {
+                    "id": 1,
+                    "name": "John Doe",
+                    "email": "john.doe@example.com",
+                    "types": "associations"
+                  },
+                  {
+                    "id": 2,
+                    "name": "Jane Smith",
+                    "email": "jane.smith@example.com",
+                    "age": "benevoles"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/utilisateurs/{id}": {
+      "get": {
+        "summary": "Obtenir un utilisateur par son ID",
+        "description": "Permet d'obtenir les détails d'un utilisateur avec son ID.",
+        "operationId": "getUserById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "ID de l'utilisateur"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Utilisateur trouvé",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 1,
+                  "name": "John Doe",
+                  "email": "john.doe@example.com",
+                  "types": "benevoles"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Utilisateur non trouvé"
+          }
+        }
+      },
+      "put": {
+        "summary": "Mettre à jour un utilisateur",
+        "description": "Permet de mettre à jour un utilisateur existant.",
+        "operationId": "updateUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "ID de l'utilisateur à mettre à jour"
+          }
+        ],
+        "requestBody": {
+          "description": "Données mises à jour de l'utilisateur",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                  },
+                  "email": {
+                    "type": "string",
+                    "example": "john.doe.updated@example.com"
+                  },
+                  "age": {
+                    "type": "integer",
+                    "example": 31
+                  }
+                },
+                "required": ["name", "email"]
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Utilisateur mis à jour avec succès",
+            "content": {
+              "application/json": {
+                "example": {
+                  "id": 1,
+                  "name": "John Doe",
+                  "email": "john.doe.updated@example.com",
+                  "age": 31
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Mauvaise requête, données manquantes ou incorrectes"
+          },
+          "404": {
+            "description": "Utilisateur non trouvé"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Supprimer un utilisateur",
+        "description": "Permet de supprimer un utilisateur en fonction de son ID.",
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "example": 1
+            },
+            "description": "ID de l'utilisateur à supprimer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Utilisateur supprimé avec succès"
+          },
+          "404": {
+            "description": "Utilisateur non trouvé"
+          }
+        }
+      }
+    }
+  }
+}
