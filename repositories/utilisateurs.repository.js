@@ -60,14 +60,14 @@ const UtilisateursRepository = class {
       );
       console.info(
         ` info de suivi selection utilisateur par id`,
-        rowsByEMail[0]
+        rowsByEmail[0]
       );
       return rowsByEmail.length > 0 ? rowsByEmail[0] : null;
     } catch (error) {
       console.error(
         `Erreur dans getUtilisateurByEmail du repository email: ${email} : ${error.message}`
       );
-      throw Error;
+      throw error;
     } finally {
       if (conn) {
         conn.release();
