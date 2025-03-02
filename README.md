@@ -6,7 +6,8 @@ Application Back-end de Gestion de missions d'associations et de candidatures de
 
 # Instructions pour installer et lancer lʼapplication
 
-git clone
+git clone https://github.com/seliegarrigues/missions_benevoles.git
+
 configurer le .env en remplissant les champs du fichier .env.example
 
 # Justification du choix technologique SQL vs NoSQL
