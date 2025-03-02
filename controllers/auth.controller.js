@@ -5,7 +5,7 @@ import UtilisateursRepository from "../repositories/utilisateurs.repository.js";
 
 const utilisateursRepository = new UtilisateursRepository();
 
-export async function inscription(req, res) {
+export async function inscription(req, res, next) {
   const { email, username, password, types } = req.body;
   if (!email || !username || !password) {
     return res
@@ -34,11 +34,11 @@ export async function inscription(req, res) {
     res.status(200).json("Bravo, l'inscription s'est bien déroulé");
   } catch (err) {
     console.error("Erreur lors de l'inscription : ", err);
-    res.status(500).json("Erreur interne lors de l'inscription");
+    next(err);
   }
 }
 
-export async function connexion(req, res) {
+export async function connexion(req, res, next) {
   const { email, password } = req.body;
   if (!email || !password) {
     return res
@@ -69,22 +69,30 @@ export async function connexion(req, res) {
     }
   } catch (error) {
     console.error("Erreur lors de la connexion :", error);
-    res.status(500).json("Erreur Interne de connexion");
+    next(error);
   }
 }
 
-export function deconnexion(req, res) {
-  res.clearCookie("cookieToken", {
-    httpOnly: true,
-    secure: false,
-    sameSite: "lax",
-  });
-  res.json({ message: "Au revoir : déconnexion résusie" });
+export function deconnexion(req, res, next) {
+  try {
+    res.clearCookie("cookieToken", {
+      httpOnly: true,
+      secure: false,
+      sameSite: "lax",
+    });
+    res.json({ message: "Au revoir : déconnexion résusie" });
+  } catch (error) {
+    next(error);
+  }
 }
 
-export function profil(req, res) {
-  res.json({
-    message: "Bienvenue dans votre profil",
-    user: req.user,
-  });
+export function profil(req, res, next) {
+  try {
+    res.json({
+      message: "Bienvenue dans votre profil",
+      user: req.user,
+    });
+  } catch (error) {
+    next(error);
+  }
 }

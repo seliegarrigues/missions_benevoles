@@ -1,6 +1,6 @@
 import CandidaturesRepository from "../repositories/candidatures.repository.js";
 
-const getCandidatures = async (req, res) => {
+const getCandidatures = async (req, res, next) => {
   try {
     const candidaturesRepository = new CandidaturesRepository();
 
@@ -11,14 +11,12 @@ const getCandidatures = async (req, res) => {
       candidatures,
     });
   } catch (error) {
-    const message = `Erreur dans getCandidatures du controller : ${error.message}`;
-    console.error(message);
-
-    res.status(500).json({ error: message });
+    console.error("Erreur dans getCandidatures:", error);
+    next(error);
   }
 };
 
-const getCandidatureById = async (req, res) => {
+const getCandidatureById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
@@ -31,13 +29,12 @@ const getCandidatureById = async (req, res) => {
       candidatureById,
     });
   } catch (error) {
-    const message = `Navré! il y a un souci dans  getCandidatureByID du controller : ${error.message}`;
-    console.error(message);
-    res.status(500).json({ error: message });
+    console.error("Erreur dans getCandidatureById :", error);
+    next(error);
   }
 };
 
-const createCandidature = async (req, res) => {
+const createCandidature = async (req, res, next) => {
   const { id_miss, id_util, date_cand } = req.body;
 
   try {
@@ -52,13 +49,12 @@ const createCandidature = async (req, res) => {
       paramCandidature,
     });
   } catch (error) {
-    const message = `Navré! il y a un souci dans createCandidature du controller : ${error.message}`;
-    console.error(message);
-    res.status(500).json({ error: message });
+    console.error("Errreur dans createCandidature :", error);
+    next(error);
   }
 };
 
-const updateCandidatureById = async (req, res) => {
+const updateCandidatureById = async (req, res, next) => {
   const { status } = req.body;
   const { id } = req.params;
 
@@ -72,24 +68,22 @@ const updateCandidatureById = async (req, res) => {
       });
     }
   } catch (error) {
-    const message = `Navré! il y a un souci dans updateCandidature du controller : ${error.message}`;
-    console.error(message);
-    res.status(500).json({ error: message });
+    console.error("Erreur dans updateCandidatureById :", error);
+    next(error);
   }
 };
-const deleteCandidatureById = async (req, res) => {
+const deleteCandidatureById = async (req, res, next) => {
   const { id } = req.params;
   try {
     const candidaturesRepository = new CandidaturesRepository();
-    const deleteCandidature =
-      await candidaturesRepository.deleteCandidatureById(id);
+
+    await candidaturesRepository.deleteCandidatureById(id);
     res.status(200).json({
       message: "la suppression de la candidature est correctement effectuée",
     });
   } catch (error) {
-    const message = `Navré! il y a un souci dans deleteCandidatureById du controller : ${error.message}`;
-    console.error(message, deleteCandidature);
-    res.status(500).json({ error: message });
+    console.error("Erreur dans deleteCandidatureById :", error);
+    next(error);
   }
 };
 export {

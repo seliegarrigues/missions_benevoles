@@ -1,6 +1,6 @@
 import MissionsRepository from "../repositories/missions.repository.js";
 
-const getMissions = async (req, res) => {
+const getMissions = async (req, res, next) => {
   try {
     const missionsRepository = new MissionsRepository();
 
@@ -11,14 +11,13 @@ const getMissions = async (req, res) => {
       missions,
     });
   } catch (error) {
-    const message = `Erreur dans getMissions du controller : ${error.message}`;
-    console.error(message);
+    console.error("Erreur dans getMissions :", error);
 
-    res.status(500).json({ error: message });
+    next(error);
   }
 };
 
-const getMissionsById = async (req, res) => {
+const getMissionsById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
@@ -31,13 +30,12 @@ const getMissionsById = async (req, res) => {
       missionsById,
     });
   } catch (error) {
-    const message = `Navré! il y a un souci dans  getMissionsByID du controller : ${error.message}`;
-    console.error(message);
-    res.status(500).json({ error: message });
+    console.error("Erreur dans getMissionsById :", error);
+    next(error);
   }
 };
 
-const createMission = async (req, res) => {
+const createMission = async (req, res, next) => {
   const { titre, description, id_util, date_debut } = req.body;
 
   try {
@@ -53,13 +51,12 @@ const createMission = async (req, res) => {
       paramMission,
     });
   } catch (error) {
-    const message = `Navré! il y a un souci dans createMission du controller : ${error.message}`;
-    console.error(message);
-    res.status(500).json({ error: message });
+    console.error("Erreur dans createMission :", error);
+    next(error);
   }
 };
 
-const updateMissionById = async (req, res) => {
+const updateMissionById = async (req, res, next) => {
   const { titre, description, date_debut } = req.body;
   const { id } = req.params;
 
@@ -77,23 +74,21 @@ const updateMissionById = async (req, res) => {
       });
     }
   } catch (error) {
-    const message = `Navré! il y a un souci dans updateMission du controller : ${error.message}`;
-    console.error(message);
-    res.status(500).json({ error: message });
+    console.error("Erreur dans updateMissionById :", error);
+    next(error);
   }
 };
 const deleteMissionById = async (req, res) => {
   const { id } = req.params;
   try {
     const missionsRepository = new MissionsRepository();
-    const deleteMission = await missionsRepository.deleteMissionById(id);
+    await missionsRepository.deleteMissionById(id);
     res.status(200).json({
       message: "la suppression de la mission est correctement effectuée",
     });
   } catch (error) {
-    const message = `Navré! il y a un souci dans deleteMissionById du controller : ${error.message}`;
-    console.error(message);
-    res.status(500).json({ error: message });
+    console.error("Erreur dans deleteMissionById :", error);
+    next(error);
   }
 };
 export {

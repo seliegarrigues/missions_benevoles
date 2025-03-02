@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import authRoutes from "./routes/auth.routes.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocumentUser from "./user.swagger.json" with { type: "json" };
+import errorHandler from "./middlewares/erreur.middleware.js";
 
 const app = express();
 const DOC = "api-docs";
@@ -25,6 +26,8 @@ app.use(
 );
 
 const PORT = process.env.PORT || 3000;
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {});
 console.info(`le serveur tourne actuellement sur le port: ${PORT}`);

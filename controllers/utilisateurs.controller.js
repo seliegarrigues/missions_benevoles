@@ -1,6 +1,6 @@
 import UtilisateursRepository from "../repositories/utilisateurs.repository.js";
 
-const getUtilisateurs = async (req, res) => {
+const getUtilisateurs = async (req, res, next) => {
   try {
     const utilisateursRepository = new UtilisateursRepository();
 
@@ -11,14 +11,13 @@ const getUtilisateurs = async (req, res) => {
       utilisateurs,
     });
   } catch (error) {
-    const message = `Erreur dans getCandidatures du controller : ${error.message}`;
-    console.error(message);
+    console.error("Erreur dans getUtilisateurs :", error);
 
-    res.status(500).json({ error: message });
+    next(error);
   }
 };
 
-const getUtilisateurById = async (req, res) => {
+const getUtilisateurById = async (req, res, next) => {
   const { id } = req.params;
 
   try {
@@ -31,9 +30,8 @@ const getUtilisateurById = async (req, res) => {
       utilisateurById,
     });
   } catch (error) {
-    const message = `Navré! il y a un souci dans  getUtilisateurByEmail du controller : ${error.message}`;
-    console.error(message);
-    res.status(500).json({ error: message });
+    console.error("Erreur dans getUtilisateurById :", error);
+    next(error);
   }
 };
 
