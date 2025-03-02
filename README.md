@@ -10,6 +10,19 @@ git clone https://github.com/seliegarrigues/missions_benevoles.git
 
 configurer le .env en remplissant les champs du fichier .env.example
 
+ouvrir son terminal
+créer un nouveau dossier
+code .
+ouverture visual Studio Code
+une fois dans le bon dossier: cd mon-dossier
+npm init -y
+verifier apparition de package.json
+installation dépendance : npm i express mariadb nodemon dotenv
+jsonwebtoken cookie-parser swagger-ui-express
+ajouter "type": "module","start": "nodemon app.js", dans package.json
+.gitignore : .env et node_modules/
+npm install
+
 # Justification du choix technologique SQL vs NoSQL
 
 Base relationnelle MariaDB (SQL) pour
