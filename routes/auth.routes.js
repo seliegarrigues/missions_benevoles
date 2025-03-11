@@ -5,10 +5,8 @@ import {
   deconnexion,
   profil,
 } from "../controllers/auth.controller.js";
-import {
-  authentificationByToken,
-  autorisation,
-} from "../middlewares/auth.middleware.js";
+import { authentificationByToken } from "../middlewares/auth.middleware.js";
+import autorisation from "../middlewares/authorizationMiddleware.js";
 
 const router = express.Router();
 

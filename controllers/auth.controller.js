@@ -96,3 +96,12 @@ export function profil(req, res, next) {
     next(error);
   }
 }
+export const userService = {
+  findById: async (id) => {
+    try {
+      return await utilisateursRepository.getUtilisateurById(id);
+    } catch (error) {
+      throw error;
+    }
+  },
+};

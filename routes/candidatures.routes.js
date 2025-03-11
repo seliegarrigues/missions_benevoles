@@ -18,7 +18,7 @@ router.post("/", createCandidature);
 router.put(
   "/:id",
   authentificationByToken,
-  verifTypeUtilisateur(["associations"]),
+  verifTypeUtilisateur,
   updateCandidatureById
 );
 router.delete("/:id", deleteCandidatureById);

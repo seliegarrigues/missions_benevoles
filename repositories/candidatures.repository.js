@@ -1,123 +1,49 @@
-import mariadb from "mariadb";
+import db from "../config/db.js";
 
 const CandidaturesRepository = class {
-  constructor() {
-    this.pool = mariadb.createPool({
-      host: process.env.DB_HOST,
-      port: process.env.DB_PORT,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASSWORD,
-      database: process.env.DATABASE,
-      connectionLimit: 5,
-    });
-  }
   getCandidatures = async () => {
-    let conn;
-    try {
-      conn = await this.pool.getConnection();
-      const rows = await conn.query("SELECT * FROM candidatures");
-      console.info(rows);
-      return rows;
-    } catch (err) {
-      console.error(`Erreur dans getCandidatures du repository : ${err}`);
-      throw err;
-    } finally {
-      if (conn) {
-        conn.release();
-      }
-    }
+    const [rows] = await db.execute("SELECT * FROM candidatures");
+    console.info(rows);
+    return rows;
   };
   getCandidatureById = async (id_cand) => {
-    let conn;
-    try {
-      conn = await this.pool.getConnection();
-      const rowsById = await conn.query(
-        `SELECT c.id_cand, c.date_cand, m.titre AS mission_titre, u.nom, u.prenom FROM candidatures c 
+    const [rows] = await db.execute(
+      `SELECT c.id_cand, c.date_cand, m.titre AS mission_titre, u.nom, u.prenom FROM candidatures c 
         JOIN missions m ON c.id_miss = m.id_miss 
         JOIN utilisateurs u ON c.id_util = u.id_util WHERE c.id_cand = ?`,
-        [id_cand]
-      );
-      console.info(` info de suivi selection candidature par id`, rowsById);
-      return rowsById;
-    } catch (error) {
-      console.error(
-        `Erreur dans getCandidatureById du repository id : ${id_cand} : ${error.message}`
-      );
-      throw new Error(
-        ` Erreur dans la fonctionnalité de getCandidatureById(id:${id_cand}) : ${error.message}`
-      );
-    } finally {
-      if (conn) {
-        conn.release();
-      }
-    }
+      [id_cand]
+    );
+    console.info(` info de suivi selection candidature par id`, rows);
+    if (!rows) {
+      return null;
+    } else return rows;
   };
-  async createCandidature(id_miss, id_util, date_cand) {
-    let conn;
-    try {
-      conn = await this.pool.getConnection();
-      const paramCandidature = { id_miss, id_util, date_cand };
-      await conn.query(
-        `INSERT INTO candidatures (id_miss, id_util, date_cand) VALUES (?,?,?)`,
-        [id_miss, id_util, date_cand]
-      );
-      return paramCandidature;
-    } catch (error) {
-      console.error(
-        `Erreur dans createCandidature du repository : ${error.message}`
-      );
-      throw new Error(
-        `Erreur dans la fonctionnalité de createCandidature  : ${error.message}`
-      );
-    } finally {
-      if (conn) {
-        conn.release();
-      }
-    }
+  async createCandidature(candidature) {
+    const { id_miss, id_util, date_cand } = candidature;
+
+    const [result] = await db.execute(
+      `INSERT INTO candidatures (id_miss, id_util, date_cand) VALUES (?,?,?) returning *`,
+      [id_miss, id_util, date_cand]
+    );
+    return result;
   }
   async updateCandidatureById(id_cand, statut) {
-    let conn;
-
-    try {
-      conn = await this.pool.getConnection();
-      await conn.query(`UPDATE candidatures SET statut = ? WHERE id_cand = ?`, [
-        statut,
-        id_cand,
-      ]);
-      const paramCandidature = { id_cand, statut };
-      return paramCandidature;
-    } catch (error) {
-      console.error(
-        `Erreur dans updateCandidature du repository : ${error.message}`
-      );
-      throw new Error(
-        `Erreur dans la fonctionnalité de updateCandidature  : ${error.message}`
-      );
-    } finally {
-      if (conn) {
-        conn.release();
-      }
-    }
+    await db.execute(`UPDATE candidatures SET statut = ? WHERE id_cand = ?`, [
+      statut,
+      id_cand,
+    ]);
   }
   async deleteCandidatureById(id_cand) {
-    let conn;
+    await db.execute(`DELETE FROM candidatures WHERE id_cand = ?`, [id_cand]);
+    return " Bravo ! La suppression de la candidature a bien été effectuée";
+  }
 
-    try {
-      conn = await this.pool.getConnection();
-      await conn.query(`DELETE FROM candidatures WHERE id_cand = ?`, [id_cand]);
-      return " Bravo ! La suppression de la candidature a bien été effectuée";
-    } catch (error) {
-      console.error(
-        `Navré! il y a une erreur dans cette opération de suppression de candidature du repository : ${error.message}`
-      );
-      throw new Error(
-        `Erreur dans la fonctionnalité de suppression de candidature  : ${error.message}`
-      );
-    } finally {
-      if (conn) {
-        conn.release();
-      }
-    }
+  async getCandidatureByMission(id_miss) {
+    const rows = await db.execute(
+      "SELECT * FROM candidatures WHERE id_miss = ?",
+      [id_miss]
+    );
+    return rows;
   }
 };
 export default CandidaturesRepository;

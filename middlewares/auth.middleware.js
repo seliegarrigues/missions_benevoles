@@ -1,28 +1,29 @@
 import jwt from "jsonwebtoken";
 import "dotenv/config";
+import { userService } from "../instanciation.js";
 
-export function authentificationByToken(req, res, next) {
+async function authentificationByToken(req, res, next) {
   const jwtToken = req.cookies.cookieToken;
   if (!jwtToken) {
-    return res
-      .status(401)
-      .json({
-        message: `vous n'avez pas d'accès car nous ne pouvons pas vous authentitfé`,
-      });
+    return res.status(401).json({
+      message:
+        "vous n'avez pas d'accès car nous ne pouvons pas vous authentifier",
+    });
   }
-  jwt.verify(jwtToken, process.env.JWT_SECRET, (err, user) => {
-    if (err)
-      return res.status(403).json({ message: `le jeton n'est pas valable` });
+
+  try {
+    const decoded = jwt.verify(jwtToken, process.env.JWT_SECRET);
+    const user = await userService.findById(decoded.id);
+    console.info("user", user);
+    if (!user) {
+      return res.status(401).json("authentification échouée");
+    }
     req.user = user;
     next();
-  });
+  } catch (err) {
+    console.error(err);
+    return res.status(401).json("authentication failed");
+  }
 }
 
-export function autorisation(req, res, next) {
-  if (!req.user) {
-    return res
-      .status(401)
-      .json({ message: `cet utilisateur n'a pas d'autorisation` });
-  }
-  next();
-}
+export { authentificationByToken };

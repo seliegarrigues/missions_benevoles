@@ -8,10 +8,15 @@ import authRoutes from "./routes/auth.routes.js";
 import swaggerUi from "swagger-ui-express";
 import swaggerDocumentUser from "./user.swagger.json" with { type: "json" };
 import errorHandler from "./middlewares/erreur.middleware.js";
+import { userService, roleService } from './instanciation.js';
+import helmet from "helmet";
+// pour instancier avant les middlewares
 
 const app = express();
 const DOC = "api-docs";
 
+
+app.use(helmet());
 app.use(cookieParser());
 app.use(express.json());
 app.use("/missions", missionsRoutes);
