@@ -1,26 +1,20 @@
 import express from "express";
-import {
-  createCandidature,
-  deleteCandidatureById,
-  getCandidatureById,
-  getCandidatures,
-  updateCandidatureById,
-} from "../controllers/candidatures.controller.js";
+import candidaturesController from "../controllers/candidatures.controller.js";
 import { verifTypeUtilisateur } from "../middlewares/verifType.middleware.js";
 import { authentificationByToken } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();
 
-router.get("/", getCandidatures);
-router.get("/:id", getCandidatureById);
+router.get("/", candidaturesController.getCandidatures);
+router.get("/:id", candidaturesController.getCandidatureById);
 
-router.post("/", createCandidature);
+router.post("/", candidaturesController.createCandidature);
 router.put(
   "/:id",
   authentificationByToken,
   verifTypeUtilisateur,
-  updateCandidatureById
+  candidaturesController.updateCandidatureById
 );
-router.delete("/:id", deleteCandidatureById);
+router.delete("/:id", candidaturesController.deleteCandidatureById);
 
 export default router;

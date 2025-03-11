@@ -1,95 +1,118 @@
 import CandidaturesRepository from "../repositories/candidatures.repository.js";
+import { verifEnumCandidature } from "../utils/verifEnumCandidature.js";
 
-const getCandidatures = async (req, res, next) => {
-  try {
-    const candidaturesRepository = new CandidaturesRepository();
-
-    const candidatures = await candidaturesRepository.getCandidatures();
-
-    res.json({
-      message: "Bravo! vous pouvez consulter les éléments demandés",
-      candidatures,
-    });
-  } catch (error) {
-    console.error("Erreur dans getCandidatures:", error);
-    next(error);
+// ----- Partie Service -----
+class CandidaturesService {
+  constructor() {
+    this.candidaturesRepository = new CandidaturesRepository();
   }
-};
 
-const getCandidatureById = async (req, res, next) => {
-  const { id } = req.params;
-
-  try {
-    const candidaturesRepository = new CandidaturesRepository();
-
-    const candidatureById = await candidaturesRepository.getCandidatureById(id);
-
-    res.status(200).json({
-      message: "Bravo! voici l'élément demandé",
-      candidatureById,
-    });
-  } catch (error) {
-    console.error("Erreur dans getCandidatureById :", error);
-    next(error);
+  async getCandidatures() {
+    return await this.candidaturesRepository.getCandidatures();
   }
-};
 
-const createCandidature = async (req, res, next) => {
-  const { id_miss, id_util, date_cand } = req.body;
+  async getCandidatureById(id) {
+    if (!id) throw new Error("L'id de la candidature est requis.");
+    return await this.candidaturesRepository.getCandidatureById(id);
+  }
 
-  try {
-    const candidaturesRepository = new CandidaturesRepository();
-    const paramCandidature = await candidaturesRepository.createCandidature(
+  async createCandidature({ id_miss, id_util, date_cand }) {
+    return await this.candidaturesRepository.createCandidature(
       id_miss,
       id_util,
       date_cand
     );
-    res.status(200).json({
-      message: "Bravo! la candidature a été correctement crée",
-      paramCandidature,
-    });
-  } catch (error) {
-    console.error("Errreur dans createCandidature :", error);
-    next(error);
   }
-};
 
-const updateCandidatureById = async (req, res, next) => {
-  const { status } = req.body;
-  const { id } = req.params;
+  async updateCandidatureById(id, status) {
+    const validStatus = verifEnumCandidature(status);
+    return await this.candidaturesRepository.updateCandidatureById(
+      id,
+      validStatus
+    );
+  }
 
-  try {
-    const candidaturesRepository = new CandidaturesRepository();
-    const updateCandidature =
-      await candidaturesRepository.updateCandidatureById(id, status);
-    if (updateCandidature) {
-      res.status(200).json({
-        message: "Bravo! la candidature a bien été mis à jour.",
+  async deleteCandidatureById(id) {
+    if (!id)
+      throw new Error("L'id de la candidature est requis pour la suppression.");
+    return await this.candidaturesRepository.deleteCandidatureById(id);
+  }
+}
+
+// ----- Partie Controller -----
+class CandidaturesController {
+  constructor() {
+    this.candidaturesService = new CandidaturesService();
+  }
+
+  async getCandidatures(req, res, next) {
+    try {
+      const candidatures = await this.candidaturesService.getCandidatures();
+      res.json({
+        message: "Bravo! vous pouvez consulter les éléments demandés",
+        candidatures,
       });
+    } catch (error) {
+      console.error("Erreur dans getCandidatures:", error);
+      next(error);
     }
-  } catch (error) {
-    console.error("Erreur dans updateCandidatureById :", error);
-    next(error);
   }
-};
-const deleteCandidatureById = async (req, res, next) => {
-  const { id } = req.params;
-  try {
-    const candidaturesRepository = new CandidaturesRepository();
 
-    await candidaturesRepository.deleteCandidatureById(id);
-    res.status(200).json({
-      message: "la suppression de la candidature est correctement effectuée",
-    });
-  } catch (error) {
-    console.error("Erreur dans deleteCandidatureById :", error);
-    next(error);
+  async getCandidatureById(req, res, next) {
+    try {
+      const { id } = req.params;
+      const candidature = await this.candidaturesService.getCandidatureById(id);
+      res.status(200).json({
+        message: "Bravo! voici l'élément demandé",
+        candidature,
+      });
+    } catch (error) {
+      console.error("Erreur dans getCandidatureById:", error);
+      next(error);
+    }
   }
-};
-export {
-  getCandidatures,
-  getCandidatureById,
-  createCandidature,
-  updateCandidatureById,
-  deleteCandidatureById,
-};
+
+  async createCandidature(req, res, next) {
+    try {
+      const candidature = await this.candidaturesService.createCandidature(
+        req.body
+      );
+      res.status(201).json({
+        message: "Bravo! la candidature a été correctement créée",
+        candidature,
+      });
+    } catch (error) {
+      console.error("Erreur dans createCandidature:", error);
+      next(error);
+    }
+  }
+
+  async updateCandidatureById(req, res, next) {
+    try {
+      const { id } = req.params;
+      const { status } = req.body;
+      await this.candidaturesService.updateCandidatureById(id, status);
+      res.status(200).json({
+        message: "Bravo! la candidature a bien été mise à jour.",
+      });
+    } catch (error) {
+      console.error("Erreur dans updateCandidatureById:", error);
+      next(error);
+    }
+  }
+
+  async deleteCandidatureById(req, res, next) {
+    try {
+      const { id } = req.params;
+      await this.candidaturesService.deleteCandidatureById(id);
+      res.status(200).json({
+        message: "La suppression de la candidature est correctement effectuée",
+      });
+    } catch (error) {
+      console.error("Erreur dans deleteCandidatureById:", error);
+      next(error);
+    }
+  }
+}
+
+export default new CandidaturesController();

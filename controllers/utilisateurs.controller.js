@@ -1,38 +1,34 @@
 import UtilisateursRepository from "../repositories/utilisateurs.repository.js";
+import ExceptionUtilisateurInexistant from "../exceptions/exceptionUtilisiteurInexistant.js";
 
-const getUtilisateurs = async (req, res, next) => {
+const utilisateursRepository = new UtilisateursRepository();
+
+export const getUtilisateurs = async (req, res, next) => {
   try {
-    const utilisateursRepository = new UtilisateursRepository();
-
     const utilisateurs = await utilisateursRepository.getUtilisateurs();
-
     res.json({
-      message: "Bravo! vous pouvez consulter les éléments demandés",
+      message: "Liste des utilisateurs",
       utilisateurs,
     });
   } catch (error) {
     console.error("Erreur dans getUtilisateurs :", error);
-
     next(error);
   }
 };
 
-const getUtilisateurById = async (req, res, next) => {
+export const getUtilisateurById = async (req, res, next) => {
   const { id } = req.params;
-
   try {
-    const utilisateursRepository = new UtilisateursRepository();
-
-    const utilisateurById = await utilisateursRepository.getUtilisateurById(id);
-
+    const utilisateur = await utilisateursRepository.getUtilisateurById(id);
+    if (!utilisateur) {
+      throw new ExceptionUtilisateurInexistant(404, "Utilisateur non trouvé");
+    }
     res.status(200).json({
-      message: "Bravo! vous pouvez consulter l'élément demandé'",
-      utilisateurById,
+      message: "Détails de l'utilisateur",
+      utilisateur,
     });
   } catch (error) {
     console.error("Erreur dans getUtilisateurById :", error);
     next(error);
   }
 };
-
-export { getUtilisateurs, getUtilisateurById };
